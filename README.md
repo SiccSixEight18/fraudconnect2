@@ -1,6 +1,6 @@
 # 🕸️ Fraud Ring Detection & Visualization
 
-A beautiful, Apple-inspired Streamlit application for detecting and visualizing fraud rings through network graph analysis.
+Streamlit application for detecting and visualizing fraud rings through network graph analysis.
 
 ## Features
 
@@ -44,7 +44,6 @@ streamlit run app.py
 - **Pandas** - Data processing
 - **NetworkX** - Graph analysis
 - **Vis.js** - Interactive network visualization
-- **Apple Design Language** - Beautiful, minimalist UI
 
 ## Design Philosophy
 
@@ -55,7 +54,4 @@ This application follows Apple's Human Interface Guidelines with:
 - Intuitive interactions
 - Professional typography
 
----
-
-Built with ❤️ using Apple-inspired design principles
 
