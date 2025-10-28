@@ -315,7 +315,7 @@ class FraudRingDetector:
                 'label': label,
                 'title': title,
                 'color': color,
-                'size': 20,  # Fixed size for all nodes (entities)
+                'size': 24,  # Fixed size for all nodes
                 'risk_score': risk_score,
                 'connections': num_connections,
                 'feature_types': num_feature_types,
@@ -346,7 +346,7 @@ class FraudRingDetector:
             
             # If multiple features, use magenta
             if len(conn['shared_features']) > 1:
-                edge_color = '#FF00FF'  # Magenta for multiple feature types
+                edge_color = '#AF52DE'  # Apple Purple for multiple feature types
             
             edges.append({
                 'id': i,
@@ -469,10 +469,6 @@ class FraudRingDetector:
             else:  # 3+
                 node['color'] = '#007AFF'  # Apple Blue (signature)
                 node['risk_level'] = 'High'
-        
-        # Optionally remove nodes with no edges (currently keeping them grayed out)
-        # To remove disconnected nodes entirely, uncomment:
-        # filtered_nodes = [n for n in filtered_nodes if n['feature_types'] > 0]
         
         return {
             'nodes': filtered_nodes,

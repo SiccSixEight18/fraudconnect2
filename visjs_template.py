@@ -306,6 +306,7 @@ def get_visjs_html(nodes, edges, height=700, physics_enabled=True, field_colors=
                 <div class="legend-color" style="background-color: #007AFF; border: 1.5px solid rgba(0, 122, 255, 0.4);"></div>
                 <div class="legend-label">High Risk (3+ Types)</div>
             </div>
+            
             {edge_legend_html}
         </div>
         
@@ -460,7 +461,7 @@ def get_visjs_html(nodes, edges, height=700, physics_enabled=True, field_colors=
             }};
             
             var network = new vis.Network(container, data, options);
-            var physicsEnabled = {str(physics_enabled).lower()};
+            var physicsEnabled = true;  // Always enable physics
             var selectedNodes = [];
             var highlightActive = false;
             
@@ -475,14 +476,9 @@ def get_visjs_html(nodes, edges, height=700, physics_enabled=True, field_colors=
                 console.log("Stabilizing: " + Math.round(widthFactor * 100) + "%");
             }});
             
-            // When stabilized, optionally turn off physics for better performance
+            // When stabilized, keep physics enabled
             network.on("stabilizationIterationsDone", function() {{
-                console.log("Stabilization complete!");
-                if (nodes.length > 100) {{
-                    network.setOptions({{ physics: false }});
-                    physicsEnabled = false;
-                    console.log("Physics disabled for performance");
-                }}
+                console.log("Stabilization complete! Physics remains enabled.");
             }});
             
             // Node click event - highlight connections
@@ -490,7 +486,7 @@ def get_visjs_html(nodes, edges, height=700, physics_enabled=True, field_colors=
                 if (params.nodes.length > 0) {{
                     var selectedNodeId = params.nodes[0];
                     highlightConnections(selectedNodeId);
-                    document.getElementById('selected-node').innerText = 'Client ' + selectedNodeId;
+                    document.getElementById('selected-node').innerText = 'Node ' + selectedNodeId;
                 }} else {{
                     resetSelection();
                 }}

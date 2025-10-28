@@ -620,7 +620,7 @@ def main():
             # Generate and display visualization with field colors
             field_colors = detector.get_field_colors() if hasattr(detector, 'get_field_colors') else None
             
-            # Determine hierarchical layout setting
+            # Use selected layout style (hierarchical optional, not forced)
             use_hierarchical = st.session_state.layout_style if st.session_state.layout_style != 'free-form' else False
             
             vis_html = get_visjs_html(
