@@ -52,21 +52,22 @@ st.markdown("""
         letter-spacing: -0.3px;
     }
     
-    /* Input fields */
+    /* Input fields - Light mode */
     .stTextInput > div > div > input,
     .stTextArea > div > div > textarea {
         border-radius: 12px;
         border: 1px solid #d2d2d7;
         padding: 12px 16px;
         font-size: 15px;
-        background: #ffffff;
+        background: #ffffff !important;
+        color: #1d1d1f !important;
         transition: all 0.2s ease;
     }
     
     .stTextInput > div > div > input:focus,
     .stTextArea > div > div > textarea:focus {
-        border-color: #0071e3;
-        box-shadow: 0 0 0 4px rgba(0, 113, 227, 0.1);
+        border-color: #0071e3 !important;
+        box-shadow: 0 0 0 4px rgba(0, 113, 227, 0.1) !important;
     }
     
     .stTextInput > label, .stTextArea > label {
@@ -74,6 +75,29 @@ st.markdown("""
         color: #1d1d1f;
         font-size: 14px;
         margin-bottom: 8px;
+    }
+    
+    /* Dark mode support */
+    [data-theme="dark"] .stTextInput > div > div > input,
+    [data-theme="dark"] .stTextArea > div > div > textarea {
+        background: #1e1e1e !important;
+        color: #ffffff !important;
+        border: 1px solid #3d3d3d !important;
+    }
+    
+    [data-theme="dark"] .stTextInput > label,
+    [data-theme="dark"] .stTextArea > label {
+        color: #ffffff !important;
+    }
+    
+    [data-theme="dark"] h1,
+    [data-theme="dark"] h2,
+    [data-theme="dark"] h3 {
+        color: #ffffff !important;
+    }
+    
+    [data-theme="dark"] .main {
+        background: linear-gradient(to bottom, #0e1117 0%, #1e1e1e 100%) !important;
     }
     
     /* Buttons */
@@ -107,7 +131,20 @@ st.markdown("""
     .stNumberInput > div > div {
         border-radius: 12px;
         border: 1px solid #d2d2d7;
-        background: #ffffff;
+        background: #ffffff !important;
+        color: #1d1d1f !important;
+    }
+    
+    [data-theme="dark"] .stSelectbox > div > div,
+    [data-theme="dark"] .stNumberInput > div > div {
+        background: #1e1e1e !important;
+        color: #ffffff !important;
+        border: 1px solid #3d3d3d !important;
+    }
+    
+    [data-theme="dark"] .stSelectbox label,
+    [data-theme="dark"] .stNumberInput label {
+        color: #ffffff !important;
     }
     
     /* Sliders */
@@ -125,10 +162,20 @@ st.markdown("""
         color: #1d1d1f;
     }
     
+    [data-theme="dark"] .stCheckbox > label {
+        color: #ffffff !important;
+    }
+    
     /* Markdown and text */
     .markdown-text-container {
         color: #6e6e73;
         line-height: 1.6;
+    }
+    
+    [data-theme="dark"] .markdown-text-container,
+    [data-theme="dark"] p,
+    [data-theme="dark"] span {
+        color: #e0e0e0 !important;
     }
     
     /* Dividers */
@@ -147,12 +194,23 @@ st.markdown("""
         background: #f5f5f7;
     }
     
+    [data-theme="dark"] .stAlert {
+        background: #1e1e1e !important;
+        border: 1px solid #3d3d3d !important;
+        color: #ffffff !important;
+    }
+    
     /* Expander */
     .streamlit-expanderHeader {
         border-radius: 12px;
         background: #f5f5f7;
         font-weight: 500;
         color: #1d1d1f;
+    }
+    
+    [data-theme="dark"] .streamlit-expanderHeader {
+        background: #1e1e1e !important;
+        color: #ffffff !important;
     }
     
     /* Card-like sections */
@@ -174,7 +232,18 @@ st.markdown("""
     .stMultiSelect > div > div {
         border-radius: 12px;
         border: 1px solid #d2d2d7;
-        background: #ffffff;
+        background: #ffffff !important;
+        color: #1d1d1f !important;
+    }
+    
+    [data-theme="dark"] .stMultiSelect > div > div {
+        background: #1e1e1e !important;
+        color: #ffffff !important;
+        border: 1px solid #3d3d3d !important;
+    }
+    
+    [data-theme="dark"] .stMultiSelect label {
+        color: #ffffff !important;
     }
     
     /* Subtle animations */
@@ -228,6 +297,8 @@ def main():
     # Initialize visualization settings
     if 'layout_algorithm' not in st.session_state:
         st.session_state.layout_algorithm = 'forceAtlas2Based'
+    if 'layout_style' not in st.session_state:
+        st.session_state.layout_style = 'free-form'
     if 'edge_smooth_type' not in st.session_state:
         st.session_state.edge_smooth_type = 'continuous'
     if 'edge_opacity' not in st.session_state:
@@ -440,21 +511,41 @@ def main():
         # Settings Section - MOVED BEFORE VISUALIZATION for auto-reload
         st.markdown("### Settings")
         
-        # Layout algorithm selector (full width)
-        layout_algorithm = st.selectbox(
-            "Layout Algorithm",
-            options=['forceAtlas2Based', 'barnesHut', 'repulsion', 'hierarchicalRepulsion'],
-            index=['forceAtlas2Based', 'barnesHut', 'repulsion', 'hierarchicalRepulsion'].index(st.session_state.layout_algorithm),
-            format_func=lambda x: {
-                'forceAtlas2Based': 'Force Atlas 2',
-                'barnesHut': 'Barnes Hut',
-                'repulsion': 'Repulsion',
-                'hierarchicalRepulsion': 'Hierarchical'
-            }[x],
-            help="Choose how nodes are arranged",
-            key="layout_select"
-        )
-        st.session_state.layout_algorithm = layout_algorithm
+        # Layout algorithm selector
+        col1, col2 = st.columns(2)
+        
+        with col1:
+            layout_algorithm = st.selectbox(
+                "Physics Algorithm",
+                options=['forceAtlas2Based', 'barnesHut', 'repulsion', 'hierarchicalRepulsion'],
+                index=['forceAtlas2Based', 'barnesHut', 'repulsion', 'hierarchicalRepulsion'].index(st.session_state.layout_algorithm),
+                format_func=lambda x: {
+                    'forceAtlas2Based': 'Force Atlas 2 (Organic)',
+                    'barnesHut': 'Barnes Hut (Clustered)',
+                    'repulsion': 'Repulsion (Spread Out)',
+                    'hierarchicalRepulsion': 'Hierarchical Repulsion'
+                }[x],
+                help="Physics algorithm for node positioning",
+                key="layout_select"
+            )
+            st.session_state.layout_algorithm = layout_algorithm
+        
+        with col2:
+            layout_style = st.selectbox(
+                "Layout Style",
+                options=['free-form', 'UD', 'DU', 'LR', 'RL'],
+                index=0 if 'layout_style' not in st.session_state else ['free-form', 'UD', 'DU', 'LR', 'RL'].index(st.session_state.layout_style),
+                format_func=lambda x: {
+                    'free-form': 'Free-Form (Organic)',
+                    'UD': 'Hierarchical (Top→Bottom)',
+                    'DU': 'Hierarchical (Bottom→Top)',
+                    'LR': 'Hierarchical (Left→Right)',
+                    'RL': 'Hierarchical (Right→Left)'
+                }[x],
+                help="Overall layout structure",
+                key="layout_style_select"
+            )
+            st.session_state.layout_style = layout_style
         
         st.markdown("#### Edge Visualization")
         
@@ -529,6 +620,9 @@ def main():
             # Generate and display visualization with field colors
             field_colors = detector.get_field_colors() if hasattr(detector, 'get_field_colors') else None
             
+            # Determine hierarchical layout setting
+            use_hierarchical = st.session_state.layout_style if st.session_state.layout_style != 'free-form' else False
+            
             vis_html = get_visjs_html(
                 filtered_data['nodes'],
                 filtered_data['edges'],
@@ -540,7 +634,8 @@ def main():
                 edge_smooth_type=st.session_state.edge_smooth_type,
                 edge_opacity=st.session_state.edge_opacity,
                 min_edge_weight=st.session_state.min_edge_weight,
-                show_edge_labels=st.session_state.show_edge_labels
+                show_edge_labels=st.session_state.show_edge_labels,
+                use_hierarchical=use_hierarchical
             )
             
             components.html(vis_html, height=750, scrolling=False)
