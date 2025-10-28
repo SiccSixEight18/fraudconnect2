@@ -6,7 +6,7 @@ Generates HTML/JavaScript for interactive network visualization
 
 def get_visjs_html(nodes, edges, height=700, physics_enabled=True, field_colors=None, chart_title="Fraud Ring Network", 
                    layout_algorithm="forceAtlas2Based", edge_smooth_type="continuous", edge_opacity=1.0, 
-                   min_edge_weight=1, show_edge_labels=True):
+                   min_edge_weight=1, show_edge_labels=True, use_hierarchical=False):
     """
     Generate HTML template with Vis.js network visualization.
     
@@ -385,32 +385,32 @@ def get_visjs_html(nodes, edges, height=700, physics_enabled=True, field_colors=
                     enabled: {str(physics_enabled).lower()},
                     stabilization: {{
                         enabled: true,
-                        iterations: 400,
+                        iterations: 800,
                         updateInterval: 20,
                         fit: true
                     }},
                     barnesHut: {{
-                        gravitationalConstant: -2500,
-                        centralGravity: 0.08,
-                        springLength: 220,
-                        springConstant: 0.015,
-                        damping: 0.25,
-                        avoidOverlap: 0.85
+                        gravitationalConstant: -8000,
+                        centralGravity: 0.05,
+                        springLength: 300,
+                        springConstant: 0.008,
+                        damping: 0.35,
+                        avoidOverlap: 1.0
                     }},
                     forceAtlas2Based: {{
-                        gravitationalConstant: -40,
-                        centralGravity: 0.008,
-                        springLength: 180,
-                        springConstant: 0.06,
-                        damping: 0.5,
-                        avoidOverlap: 0.85
+                        gravitationalConstant: -100,
+                        centralGravity: 0.001,
+                        springLength: 250,
+                        springConstant: 0.03,
+                        damping: 0.6,
+                        avoidOverlap: 1.0
                     }},
                     repulsion: {{
-                        centralGravity: 0.15,
-                        springLength: 220,
-                        springConstant: 0.04,
-                        nodeDistance: 170,
-                        damping: 0.12
+                        centralGravity: 0.01,
+                        springLength: 350,
+                        springConstant: 0.02,
+                        nodeDistance: 250,
+                        damping: 0.15
                     }},
                     hierarchicalRepulsion: {{
                         centralGravity: 0.0,
@@ -436,9 +436,20 @@ def get_visjs_html(nodes, edges, height=700, physics_enabled=True, field_colors=
                     hideEdgesOnZoom: false
                 }},
                 layout: {{
-                    improvedLayout: true,
-                    randomSeed: 42,
-                    hierarchical: false
+                    improvedLayout: {str(not use_hierarchical).lower()},
+                    randomSeed: undefined,
+                    hierarchical: {f'''{{
+                        enabled: true,
+                        levelSeparation: 250,
+                        nodeSpacing: 200,
+                        treeSpacing: 300,
+                        blockShifting: true,
+                        edgeMinimization: true,
+                        parentCentralization: true,
+                        direction: '{use_hierarchical}',
+                        sortMethod: 'directed',
+                        shakeTowards: 'leaves'
+                    }}''' if use_hierarchical else 'false'}
                 }},
                 manipulation: {{
                     enabled: false
